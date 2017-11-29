@@ -1,26 +1,26 @@
-# Based and fork from
-https://github.com/antonsamper/hapi-cron
-
 # hapi-cron-cluster
 A Hapi plugin to setup cron jobs that will call predefined server routes at specified times with leader election (cluster mode)
 
+# Based and fork from (credits)
+https://github.com/antonsamper/hapi-cron
+
 ## Requirements
 This plugin is compatible with **hapi** v17+ and requires Node v8+.
-If you need a version compatible with **hapi** v16 please install version [1.0.0](https://github.com/antonsamper/hapi-cron/releases/tag/v1.0.0).
+If you need a version compatible with **hapi** v16 please install version [1.0.0](https://github.com/meg4mi/hapi-cron-cluster/releases/tag/v1.0.0).
 
 
 ## Installation
-Add `hapi-cron` as a dependency to your project:
+Add `hapi-cron-cluster` as a dependency to your project:
 
 ```bash
-$ npm install --save hapi-cron
+$ npm install --save hapi-cron-cluster
 ```
 
 
 ## Usage
 ```javascript
 const Hapi = require('hapi');
-const HapiCron = require('hapi-cron');
+const HapiCron = require('hapi-cron-cluster');
 
 const server = new Hapi.Server();
 
@@ -30,6 +30,12 @@ async function allSystemsGo() {
         await server.register({
             plugin: HapiCron,
             options: {
+                lock: {
+                    url: 'mongodb://localhost/test',
+                    key: 'lockTest',
+                    ttl: 5000,
+                    retry: 1000
+                },
                 jobs: [{
                     name: 'testcron',
                     time: '*/10 * * * * *',
