@@ -70,10 +70,15 @@ allSystemsGo();
 ```
 
 ## Options
-* `name` - A unique name for the cron job
-* `time` - A valid cron value. [See cron configuration](#cron-configuration)
-* `timezone` - A valid [timezone](https://momentjs.com/timezone/)
-* `request` - The request object containing the route url path. Other [options](https://hapijs.com/api#serverinjectoptions-callback) can also be passed into the request object 
+* `lock` - object that contains params for cluster leader election
+* `lock.url` - mongodb url
+* `lock.key` - group key for leader election
+* `lock.ttl` - time to live when lock acquire
+* `lock.retry` - wait time brefore retrying to get the lock
+* `jobs.name` - A unique name for the cron job
+* `jobs.time` - A valid cron value. [See cron configuration](#cron-configuration)
+* `jobs.timezone` - A valid [timezone](https://momentjs.com/timezone/)
+* `jobs.request` - The request object containing the route url path. Other [options](https://hapijs.com/api#serverinjectoptions-callback) can also be passed into the request object 
     * `url` - Route path to request
     * `method` - Request method (defaults to `GET`) - `optional`
 * `onComplete` - Function to run after the route has been requested. The function will contain the response from the request - `optional`
