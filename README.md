@@ -6,14 +6,16 @@ https://github.com/antonsamper/hapi-cron
 
 ## Requirements
 This plugin is compatible with **hapi** v17+ and requires Node v8+.
-If you need a version compatible with **hapi** v16 please install version [1.0.0](https://github.com/meg4mi/hapi-cron-cluster/releases/tag/v1.0.0).
-
+If you need a version compatible with **hapi** v16 please install version [1.0.1](https://github.com/meg4mi/hapi-cron-cluster/releases/tag/v1.0.1).
+`hapi-cron-cluster@1.0.1`
 
 ## Installation
 Add `hapi-cron-cluster` as a dependency to your project:
 
 ```bash
 $ npm install --save hapi-cron-cluster
+or
+$ npm install --save hapi-cron-cluster@1.0.1  (for hapi v16)
 ```
 
 
