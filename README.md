@@ -1,16 +1,18 @@
-# hapi-cron [![Build Status](https://travis-ci.org/antonsamper/hapi-cron.svg?branch=master)](https://travis-ci.org/antonsamper/hapi-cron)
-A hapi plugin to setup cron jobs that will call a predefined server route at a specified time.
+# hapi-cron-cluster
+A Hapi plugin to setup cron jobs that will call predefined server routes at specified times with leader election (cluster mode)
 
+# Based and fork from
+https://github.com/antonsamper/hapi-cron
 
 ## Requirements
 The plugin is written in ES2016, please use **Node.js v4 or later**.
 
 
 ## Installation
-Add `hapi-cron` as a dependency to your project:
+Add `hapi-cron-cluster` as a dependency to your project:
 
 ```bash
-npm i -S hapi-cron
+npm i -S hapi-cron-cluster
 # you're using NPM shortcuts to (i)nstall and (-S)ave the module as a dependency
 ```
 
@@ -24,6 +26,12 @@ Server.connection();
 Server.register({
     register: require('hapi-cron'),
     options: {
+        lock: {
+                url: 'mongodb://localhost/test',
+                key: 'lockTest',
+                ttl: 5000,
+                retry: 1000
+        },
         jobs: [{
             name: 'testcron',
             time: '*/10 * * * * *',

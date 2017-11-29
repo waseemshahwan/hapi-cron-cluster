@@ -1,3 +1,9 @@
 {
-    "extends": "hapi"
+    "extends": "hapi",
+    "globals": {
+        "describe": true,
+        "it": true,
+        "expect": true,
+        "jest": true
+    }
 }

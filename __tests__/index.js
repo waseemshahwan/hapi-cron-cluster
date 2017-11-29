@@ -20,7 +20,17 @@ describe('registration assertions', () => {
 
         const server = new Hapi.Server();
 
-        server.register(CronPlugin, (err) => {
+        server.register({
+            register: CronPlugin,
+            options: {
+                lock: {
+                    url: 'mongodb://localhost/test',
+                    key: 'lockTest',
+                    ttl: 5000,
+                    retry: 1000
+                }
+            }
+        }, (err) => {
 
             expect(err).toBeUndefined();
         });
@@ -35,6 +45,12 @@ describe('registration assertions', () => {
             server.register({
                 register: CronPlugin,
                 options: {
+                    lock: {
+                        url: 'mongodb://localhost/test',
+                        key: 'lockTest',
+                        ttl: 5000,
+                        retry: 1000
+                    },
                     jobs: [{
                         name: 'testname',
                         time: '*/10 * * * * *',
@@ -64,6 +80,12 @@ describe('registration assertions', () => {
             server.register({
                 register: CronPlugin,
                 options: {
+                    lock: {
+                        url: 'mongodb://localhost/test',
+                        key: 'lockTest',
+                        ttl: 5000,
+                        retry: 1000
+                    },
                     jobs: [{
                         time: '*/10 * * * * *',
                         timezone: 'Europe/London',
@@ -85,6 +107,12 @@ describe('registration assertions', () => {
             server.register({
                 register: CronPlugin,
                 options: {
+                    lock: {
+                        url: 'mongodb://localhost/test',
+                        key: 'lockTest',
+                        ttl: 5000,
+                        retry: 1000
+                    },
                     jobs: [{
                         name: 'testcron',
                         timezone: 'Europe/London',
@@ -106,6 +134,12 @@ describe('registration assertions', () => {
             server.register({
                 register: CronPlugin,
                 options: {
+                    lock: {
+                        url: 'mongodb://localhost/test',
+                        key: 'lockTest',
+                        ttl: 5000,
+                        retry: 1000
+                    },
                     jobs: [{
                         name: 'testcron',
                         time: 'invalid cron',
@@ -128,6 +162,12 @@ describe('registration assertions', () => {
             server.register({
                 register: CronPlugin,
                 options: {
+                    lock: {
+                        url: 'mongodb://localhost/test',
+                        key: 'lockTest',
+                        ttl: 5000,
+                        retry: 1000
+                    },
                     jobs: [{
                         name: 'testcron',
                         time: '*/10 * * * * *',
@@ -150,6 +190,12 @@ describe('registration assertions', () => {
             server.register({
                 register: CronPlugin,
                 options: {
+                    lock: {
+                        url: 'mongodb://localhost/test',
+                        key: 'lockTest',
+                        ttl: 5000,
+                        retry: 1000
+                    },
                     jobs: [{
                         name: 'testcron',
                         time: '*/10 * * * * *',
@@ -171,6 +217,12 @@ describe('registration assertions', () => {
             server.register({
                 register: CronPlugin,
                 options: {
+                    lock: {
+                        url: 'mongodb://localhost/test',
+                        key: 'lockTest',
+                        ttl: 5000,
+                        retry: 1000
+                    },
                     jobs: [{
                         name: 'testcron',
                         time: '*/10 * * * * *',
@@ -190,6 +242,12 @@ describe('registration assertions', () => {
             server.register({
                 register: CronPlugin,
                 options: {
+                    lock: {
+                        url: 'mongodb://localhost/test',
+                        key: 'lockTest',
+                        ttl: 5000,
+                        retry: 1000
+                    },
                     jobs: [{
                         name: 'testcron',
                         time: '*/10 * * * * *',
@@ -213,6 +271,12 @@ describe('plugin functionality', () => {
         server.register({
             register: CronPlugin,
             options: {
+                lock: {
+                    url: 'mongodb://localhost/test',
+                    key: 'lockTest',
+                    ttl: 5000,
+                    retry: 1000
+                },
                 jobs: [{
                     name: 'testcron',
                     time: '*/10 * * * * *',
@@ -226,14 +290,14 @@ describe('plugin functionality', () => {
         }, (err) => {
 
             expect(err).toBeUndefined();
-            expect(server.plugins['hapi-cron']).toBeDefined();
-            expect(server.plugins['hapi-cron'].jobs.testcron).toBeDefined();
+            expect(server.plugins['hapi-cron-cluster']).toBeDefined();
+            expect(server.plugins['hapi-cron-cluster'].jobs.testcron).toBeDefined();
         });
     });
 
-    it('should ensure server.inject is called with the plugin options', () => {
+    it('should ensure server.inject is called with the plugin options', (done) => {
 
-        const callback =  jest.fn();
+        const callback = jest.fn();
         const server = new Hapi.Server();
 
         server.connection();
@@ -241,9 +305,15 @@ describe('plugin functionality', () => {
         server.register({
             register: CronPlugin,
             options: {
+                lock: {
+                    url: 'mongodb://localhost/test',
+                    key: 'lockTest',
+                    ttl: 5000,
+                    retry: 1000
+                },
                 jobs: [{
                     name: 'testcron',
-                    time: '*/10 * * * * *',
+                    time: '*/3 * * * * *',
                     timezone: 'Europe/London',
                     request: {
                         method: 'GET',
@@ -260,12 +330,27 @@ describe('plugin functionality', () => {
 
             expect(server.connections[0].inject).not.toHaveBeenCalled();
 
-            server.plugins['hapi-cron'].jobs.testcron._callbacks[0]();
+            server.start((err) => {
 
-            expect(server.connections[0].inject).toHaveBeenCalledWith({
-                method: 'GET',
-                url: '/test-url'
-            }, callback);
+                expect(err).toBeUndefined();
+                const p = new Promise((resolve, reject) => {
+
+                    setTimeout(() => {
+
+                        resolve();
+                    }, 4000);
+                });
+                p.then(() => {
+
+                    expect(server.connections[0].inject).toHaveBeenCalledWith({
+                        method: 'GET',
+                        url: '/test-url'
+                    }, callback);
+                    server.stop();
+                    done();
+                });
+
+            });
         });
     });
 
@@ -278,6 +363,12 @@ describe('plugin functionality', () => {
         server.register({
             register: CronPlugin,
             options: {
+                lock: {
+                    url: 'mongodb://localhost/test',
+                    key: 'lockTest',
+                    ttl: 5000,
+                    retry: 1000
+                },
                 jobs: [{
                     name: 'testcron',
                     time: '*/10 * * * * *',
@@ -292,13 +383,13 @@ describe('plugin functionality', () => {
 
             expect(err).toBeUndefined();
 
-            expect(server.plugins['hapi-cron'].jobs.testcron.running).toBeUndefined();
+            expect(server.plugins['hapi-cron-cluster'].jobs.testcron.running).toBeUndefined();
 
             server.start((err) => {
 
                 expect(err).toBeUndefined();
 
-                expect(server.plugins['hapi-cron'].jobs.testcron.running).toBe(true);
+                expect(server.plugins['hapi-cron-cluster'].jobs.testcron.running).toBe(true);
 
                 server.stop();
 
@@ -316,6 +407,12 @@ describe('plugin functionality', () => {
         server.register({
             register: CronPlugin,
             options: {
+                lock: {
+                    url: 'mongodb://localhost/test',
+                    key: 'lockTest',
+                    ttl: 5000,
+                    retry: 1000
+                },
                 jobs: [{
                     name: 'testcron',
                     time: '*/10 * * * * *',
@@ -334,11 +431,11 @@ describe('plugin functionality', () => {
 
                 expect(err).toBeUndefined();
 
-                expect(server.plugins['hapi-cron'].jobs.testcron.running).toBe(true);
+                expect(server.plugins['hapi-cron-cluster'].jobs.testcron.running).toBe(true);
 
                 server.stop();
 
-                expect(server.plugins['hapi-cron'].jobs.testcron.running).toBe(false);
+                expect(server.plugins['hapi-cron-cluster'].jobs.testcron.running).toBe(false);
 
                 done();
             });
