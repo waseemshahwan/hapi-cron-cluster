@@ -14,3 +14,5 @@ coverage
 
 # Logs
 *.log
+
+package-lock.json
