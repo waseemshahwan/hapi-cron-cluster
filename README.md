@@ -24,7 +24,7 @@ const Server = new Hapi.Server();
 Server.connection();
 
 Server.register({
-    register: require('hapi-cron'),
+    register: require('hapi-cron-cluster'),
     options: {
         lock: {
                 url: 'mongodb://localhost/test',
