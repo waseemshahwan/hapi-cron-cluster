@@ -18,7 +18,15 @@ describe('registration assertions', () => {
         const server = new Hapi.Server();
 
         await server.register({
-            plugin: HapiCron
+            plugin: HapiCron,
+            options: {
+                lock: {
+                    url: 'mongodb://localhost/test',
+                    key: 'lockTest',
+                    ttl: 5000,
+                    retry: 1000
+                }
+            }
         });
     });
 
@@ -30,6 +38,12 @@ describe('registration assertions', () => {
             await server.register({
                 plugin: HapiCron,
                 options: {
+                    lock: {
+                        url: 'mongodb://localhost/test',
+                        key: 'lockTest',
+                        ttl: 5000,
+                        retry: 1000
+                    },
                     jobs: [{
                         name: 'testname',
                         time: '*/10 * * * * *',
@@ -61,6 +75,12 @@ describe('registration assertions', () => {
             await server.register({
                 plugin: HapiCron,
                 options: {
+                    lock: {
+                        url: 'mongodb://localhost/test',
+                        key: 'lockTest',
+                        ttl: 5000,
+                        retry: 1000
+                    },
                     jobs: [{
                         time: '*/10 * * * * *',
                         timezone: 'Europe/London',
@@ -84,6 +104,12 @@ describe('registration assertions', () => {
             await server.register({
                 plugin: HapiCron,
                 options: {
+                    lock: {
+                        url: 'mongodb://localhost/test',
+                        key: 'lockTest',
+                        ttl: 5000,
+                        retry: 1000
+                    },
                     jobs: [{
                         name: 'testcron',
                         timezone: 'Europe/London',
@@ -107,6 +133,12 @@ describe('registration assertions', () => {
             await server.register({
                 plugin: HapiCron,
                 options: {
+                    lock: {
+                        url: 'mongodb://localhost/test',
+                        key: 'lockTest',
+                        ttl: 5000,
+                        retry: 1000
+                    },
                     jobs: [{
                         name: 'testcron',
                         time: 'invalid cron',
@@ -131,6 +163,12 @@ describe('registration assertions', () => {
             await server.register({
                 plugin: HapiCron,
                 options: {
+                    lock: {
+                        url: 'mongodb://localhost/test',
+                        key: 'lockTest',
+                        ttl: 5000,
+                        retry: 1000
+                    },
                     jobs: [{
                         name: 'testcron',
                         time: '*/10 * * * * *',
@@ -155,6 +193,12 @@ describe('registration assertions', () => {
             await server.register({
                 plugin: HapiCron,
                 options: {
+                    lock: {
+                        url: 'mongodb://localhost/test',
+                        key: 'lockTest',
+                        ttl: 5000,
+                        retry: 1000
+                    },
                     jobs: [{
                         name: 'testcron',
                         time: '*/10 * * * * *',
@@ -178,6 +222,12 @@ describe('registration assertions', () => {
             await server.register({
                 plugin: HapiCron,
                 options: {
+                    lock: {
+                        url: 'mongodb://localhost/test',
+                        key: 'lockTest',
+                        ttl: 5000,
+                        retry: 1000
+                    },
                     jobs: [{
                         name: 'testcron',
                         time: '*/10 * * * * *',
@@ -199,6 +249,12 @@ describe('registration assertions', () => {
             await server.register({
                 plugin: HapiCron,
                 options: {
+                    lock: {
+                        url: 'mongodb://localhost/test',
+                        key: 'lockTest',
+                        ttl: 5000,
+                        retry: 1000
+                    },
                     jobs: [{
                         name: 'testcron',
                         time: '*/10 * * * * *',
@@ -225,6 +281,12 @@ describe('plugin functionality', () => {
         await server.register({
             plugin: HapiCron,
             options: {
+                lock: {
+                    url: 'mongodb://localhost:27017/test',
+                    key: 'lockTest',
+                    ttl: 5000,
+                    retry: 1000
+                },
                 jobs: [{
                     name: 'testcron',
                     time: '*/10 * * * * *',
@@ -236,9 +298,8 @@ describe('plugin functionality', () => {
                 }]
             }
         });
-
-        expect(server.plugins['hapi-cron']).toBeDefined();
-        expect(server.plugins['hapi-cron'].jobs.testcron).toBeDefined();
+        expect(server.plugins['hapi-cron-cluster']).toBeDefined();
+        expect(server.plugins['hapi-cron-cluster'].jobs.testcron).toBeDefined();
     });
 
     it('should ensure server.inject is called with the plugin options', async () => {
@@ -251,9 +312,15 @@ describe('plugin functionality', () => {
         await server.register({
             plugin: HapiCron,
             options: {
+                lock: {
+                    url: 'mongodb://localhost:27017/test',
+                    key: 'lockTest',
+                    ttl: 5000,
+                    retry: 1000
+                },
                 jobs: [{
                     name: 'testcron',
-                    time: '*/10 * * * * *',
+                    time: '*/3 * * * * *',
                     timezone: 'Europe/London',
                     request: {
                         method: 'GET',
@@ -263,15 +330,22 @@ describe('plugin functionality', () => {
                 }]
             }
         });
+        await server.start();
 
         expect(Shot.inject).not.toHaveBeenCalled();
         expect(onComplete).not.toHaveBeenCalled();
+        await new Promise((resolve, reject) => {
 
-        await server.plugins['hapi-cron'].jobs.testcron._callbacks[0]();
+            setTimeout(async () => {
 
-        expect(onComplete).toHaveBeenCalledTimes(1);
-        expect(Shot.inject.mock.calls[0][1].method).toBe('GET');
-        expect(Shot.inject.mock.calls[0][1].url).toBe('/test-url');
+                expect(onComplete).toHaveBeenCalledTimes(1);
+                expect(Shot.inject.mock.calls[0][1].method).toBe('GET');
+                expect(Shot.inject.mock.calls[0][1].url).toBe('/test-url');
+                await server.stop();
+                resolve();
+            }, 4000);
+        });
+
     });
 
     it('should not start the jobs until the server starts', async () => {
@@ -281,6 +355,12 @@ describe('plugin functionality', () => {
         await server.register({
             plugin: HapiCron,
             options: {
+                lock: {
+                    url: 'mongodb://localhost/test',
+                    key: 'lockTest',
+                    ttl: 5000,
+                    retry: 1000
+                },
                 jobs: [{
                     name: 'testcron',
                     time: '*/10 * * * * *',
@@ -293,11 +373,11 @@ describe('plugin functionality', () => {
             }
         });
 
-        expect(server.plugins['hapi-cron'].jobs.testcron.running).toBeUndefined();
+        expect(server.plugins['hapi-cron-cluster'].jobs.testcron.running).toBeUndefined();
 
         await server.start();
 
-        expect(server.plugins['hapi-cron'].jobs.testcron.running).toBe(true);
+        expect(server.plugins['hapi-cron-cluster'].jobs.testcron.running).toBe(true);
 
         await server.stop();
     });
@@ -309,6 +389,12 @@ describe('plugin functionality', () => {
         await server.register({
             plugin: HapiCron,
             options: {
+                lock: {
+                    url: 'mongodb://localhost/test',
+                    key: 'lockTest',
+                    ttl: 5000,
+                    retry: 1000
+                },
                 jobs: [{
                     name: 'testcron',
                     time: '*/10 * * * * *',
@@ -323,10 +409,10 @@ describe('plugin functionality', () => {
 
         await server.start();
 
-        expect(server.plugins['hapi-cron'].jobs.testcron.running).toBe(true);
+        expect(server.plugins['hapi-cron-cluster'].jobs.testcron.running).toBe(true);
 
         await server.stop();
 
-        expect(server.plugins['hapi-cron'].jobs.testcron.running).toBe(false);
+        expect(server.plugins['hapi-cron-cluster'].jobs.testcron.running).toBe(false);
     });
 });

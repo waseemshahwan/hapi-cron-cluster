@@ -1,7 +1,7 @@
 {
-  "name": "hapi-cron",
+  "name": "hapi-cron-cluster",
   "version": "1.0.0",
-  "description": "A Hapi plugin to setup cron jobs that will call predefined server routes at specified times",
+  "description": "A Hapi plugin to setup cron jobs that will call predefined server routes at specified times with leader election (cluster mode)",
   "main": "lib/index.js",
   "scripts": {
     "test": "npm run eslint && jest --runInBand",
@@ -9,19 +9,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antonsamper/hapi-cron.git"
+    "url": "git+https://github.com/Meg4mi/hapi-cron-cluster.git"
   },
   "keywords": [
     "hapi",
     "plugin",
-    "cron"
+    "cron",
+    "cluster"
   ],
-  "author": "Anton Samper Rivaya",
+  "author": "Meg4mi",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/antonsamper/hapi-cron/issues"
+    "url": "https://github.com/Meg4mi/hapi-cron-cluster/issues"
   },
-  "homepage": "https://github.com/antonsamper/hapi-cron#readme",
+  "homepage": "https://github.com/Meg4mi/hapi-cron-cluster#readme",
   "devDependencies": {
     "eslint": "^4.11.0",
     "eslint-config-hapi": "^11.1.0",
@@ -32,7 +33,8 @@
   },
   "dependencies": {
     "cron": "^1.3.0",
-    "hoek": "^5.0.2"
+    "hoek": "^5.0.2",
+    "mongo-leader": "0.0.15"
   },
   "engines": {
     "node": ">=8.0.0"

@@ -1,10 +1,12 @@
-# hapi-cron [![Build Status](https://travis-ci.org/antonsamper/hapi-cron.svg?branch=master)](https://travis-ci.org/antonsamper/hapi-cron)
-A Hapi plugin to setup cron jobs that will call predefined server routes at specified times.
+# Based and fork from
+https://github.com/antonsamper/hapi-cron
 
+# hapi-cron-cluster
+A Hapi plugin to setup cron jobs that will call predefined server routes at specified times with leader election (cluster mode)
 
 ## Requirements
 This plugin is compatible with **hapi** v17+ and requires Node v8+.
-If you need a version compatible with **hapi** v16 please install version [0.0.3](https://github.com/antonsamper/hapi-cron/releases/tag/v0.0.3).
+If you need a version compatible with **hapi** v16 please install version [1.0.0](https://github.com/antonsamper/hapi-cron/releases/tag/v1.0.0).
 
 
 ## Installation
