@@ -366,7 +366,7 @@ describe('plugin functionality', () => {
             register: CronPlugin,
             options: {
                 lock: {
-                    url: 'redis://localhost:6379',
+                    url: 'redis://localhost',
                     key: 'lockTest',
                     ttl: 5000,
                     retry: 1000

@@ -28,7 +28,7 @@ Server.register({
     register: require('hapi-cron-cluster'),
     options: {
         lock: {
-                url: 'mongodb://localhost/test',
+                url: 'mongodb://localhost/test', // 'redis://localhost'
                 key: 'lockTest',
                 ttl: 5000,
                 retry: 1000
@@ -62,7 +62,7 @@ Server.register({
 
 ## Plugin Options
 * `lock` - object that contains params for cluster leader election
-* `lock.url` - mongodb url
+* `lock.url` - mongodb or redis url
 * `lock.key` - group key for leader election
 * `lock.ttl` - time to live when lock acquire
 * `lock.retry` - wait time brefore retrying to get the lock
