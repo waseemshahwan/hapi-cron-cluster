@@ -367,7 +367,7 @@ describe('plugin functionality', () => {
             options: {
                 lock: {
                     url: 'redis://localhost',
-                    key: 'lockTest',
+                    key: 'lockTest2',
                     ttl: 5000,
                     retry: 1000
                 },
