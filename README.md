@@ -6,6 +6,7 @@ https://github.com/antonsamper/hapi-cron
 
 ## Requirements
 The plugin is written in ES2016, please use **Node.js v4 or later**.
+The plugin need to connect to mongo or redis (for leader election)
 
 
 ## Installation
@@ -60,6 +61,11 @@ Server.register({
 ```
 
 ## Plugin Options
+* `lock` - object that contains params for cluster leader election
+* `lock.url` - mongodb url
+* `lock.key` - group key for leader election
+* `lock.ttl` - time to live when lock acquire
+* `lock.retry` - wait time brefore retrying to get the lock
 * `name` - [REQUIRED] - The name of the cron job. This can be anything but it must be unique.
 * `time` - [REQUIRED] - A valid cron value. [See cron configuration](#cron-configuration)
 * `timezone` - [REQUIRED] - A valid [timezone](https://momentjs.com/timezone/).

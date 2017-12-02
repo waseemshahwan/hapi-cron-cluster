@@ -354,6 +354,66 @@ describe('plugin functionality', () => {
         });
     });
 
+
+    it('should ensure server.inject is called with the plugin options REDIS engine', (done) => {
+
+        const callback = jest.fn();
+        const server = new Hapi.Server();
+
+        server.connection();
+
+        server.register({
+            register: CronPlugin,
+            options: {
+                lock: {
+                    url: 'redis://localhost:6379',
+                    key: 'lockTest',
+                    ttl: 5000,
+                    retry: 1000
+                },
+                jobs: [{
+                    name: 'testcron',
+                    time: '*/3 * * * * *',
+                    timezone: 'Europe/London',
+                    request: {
+                        method: 'GET',
+                        url: '/test-url'
+                    },
+                    callback
+                }]
+            }
+        }, (err) => {
+
+            expect(err).toBeUndefined();
+
+            server.connections[0].inject = jest.fn();
+
+            expect(server.connections[0].inject).not.toHaveBeenCalled();
+
+            server.start((err) => {
+
+                expect(err).toBeUndefined();
+                const p = new Promise((resolve, reject) => {
+
+                    setTimeout(() => {
+
+                        resolve();
+                    }, 4000);
+                });
+                p.then(() => {
+
+                    expect(server.connections[0].inject).toHaveBeenCalledWith({
+                        method: 'GET',
+                        url: '/test-url'
+                    }, callback);
+                    server.stop();
+                    done();
+                });
+
+            });
+        });
+    });
+
     it('should not start the jobs until the server starts', (done) => {
 
         const server = new Hapi.Server();

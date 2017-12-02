@@ -15,7 +15,9 @@
     "hapi",
     "plugin",
     "cron",
-    "cluster"
+    "cluster",
+    "mongodb",
+    "redis"
   ],
   "author": "Meg4mi",
   "license": "BSD-3-Clause",
@@ -33,7 +35,9 @@
   "dependencies": {
     "cron": "^1.2.1",
     "hoek": "^4.1.0",
-    "mongo-leader": "0.0.15"
+    "mongo-leader": "0.0.15",
+    "redis": "^2.8.0",
+    "redislock": "^1.3.0"
   },
   "engines": {
     "node": ">=4.0.0"
