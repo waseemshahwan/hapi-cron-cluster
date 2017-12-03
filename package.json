@@ -1,6 +1,6 @@
 {
   "name": "hapi-cron-cluster",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "description": "A Hapi plugin to setup cron jobs that will call predefined server routes at specified times with leader election (cluster mode)",
   "main": "lib/index.js",
   "scripts": {
@@ -15,7 +15,9 @@
     "hapi",
     "plugin",
     "cron",
-    "cluster"
+    "cluster",
+    "mongodb",
+    "redis"
   ],
   "author": "Meg4mi",
   "license": "BSD-3-Clause",
@@ -34,7 +36,9 @@
   "dependencies": {
     "cron": "^1.3.0",
     "hoek": "^5.0.2",
-    "mongo-leader": "0.0.15"
+    "mongo-leader": "0.0.15",
+    "redis": "^2.8.0",
+    "redislock": "^1.3.0"
   },
   "engines": {
     "node": ">=8.0.0"

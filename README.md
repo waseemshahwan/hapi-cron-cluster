@@ -6,8 +6,9 @@ https://github.com/antonsamper/hapi-cron
 
 ## Requirements
 This plugin is compatible with **hapi** v17+ and requires Node v8+.
-If you need a version compatible with **hapi** v16 please install version [1.0.1](https://github.com/meg4mi/hapi-cron-cluster/releases/tag/v1.0.1).
-`hapi-cron-cluster@1.0.1`
+If you need a version compatible with **hapi** v16 please install version [1.1.1](https://github.com/meg4mi/hapi-cron-cluster/releases/tag/v1.1.1).
+The plugin need to connect to mongo or redis (for leader election)
+`hapi-cron-cluster@1.1.1`
 
 ## Installation
 Add `hapi-cron-cluster` as a dependency to your project:
@@ -15,7 +16,7 @@ Add `hapi-cron-cluster` as a dependency to your project:
 ```bash
 $ npm install --save hapi-cron-cluster
 or
-$ npm install --save hapi-cron-cluster@1.0.1  (for hapi v16)
+$ npm install --save hapi-cron-cluster@1.1.1  (for hapi v16)
 ```
 
 
@@ -33,7 +34,7 @@ async function allSystemsGo() {
             plugin: HapiCron,
             options: {
                 lock: {
-                    url: 'mongodb://localhost/test',
+                    url: 'mongodb://localhost/test', // 'redis://localhost'
                     key: 'lockTest',
                     ttl: 5000,
                     retry: 1000
@@ -73,7 +74,7 @@ allSystemsGo();
 
 ## Options
 * `lock` - object that contains params for cluster leader election
-* `lock.url` - mongodb url
+* `lock.url` - mongodb or redis url
 * `lock.key` - group key for leader election
 * `lock.ttl` - time to live when lock acquire
 * `lock.retry` - wait time brefore retrying to get the lock

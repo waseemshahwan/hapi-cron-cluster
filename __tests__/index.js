@@ -343,7 +343,53 @@ describe('plugin functionality', () => {
                 expect(Shot.inject.mock.calls[0][1].url).toBe('/test-url');
                 await server.stop();
                 resolve();
-            }, 4000);
+            }, 3200);
+        });
+
+    });
+
+    it('should ensure server.inject is called with the plugin options, REDIS Engine', async () => {
+
+        const onComplete = jest.fn();
+        const server = new Hapi.Server();
+
+        Shot.inject = jest.fn(Shot.inject);
+
+        await server.register({
+            plugin: HapiCron,
+            options: {
+                lock: {
+                    url: 'redis://localhost',
+                    key: 'lockTest',
+                    ttl: 5000,
+                    retry: 1000
+                },
+                jobs: [{
+                    name: 'testcron',
+                    time: '*/3 * * * * *',
+                    timezone: 'Europe/London',
+                    request: {
+                        method: 'GET',
+                        url: '/test-url'
+                    },
+                    onComplete
+                }]
+            }
+        });
+        await server.start();
+
+        expect(Shot.inject).not.toHaveBeenCalled();
+        expect(onComplete).not.toHaveBeenCalled();
+        await new Promise((resolve, reject) => {
+
+            setTimeout(async () => {
+
+                expect(onComplete).toHaveBeenCalledTimes(1);
+                expect(Shot.inject.mock.calls[0][1].method).toBe('GET');
+                expect(Shot.inject.mock.calls[0][1].url).toBe('/test-url');
+                await server.stop();
+                resolve();
+            }, 3200);
         });
 
     });
